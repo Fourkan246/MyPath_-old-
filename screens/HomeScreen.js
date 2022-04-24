@@ -169,7 +169,7 @@ const HomeScreen = () => {
 
       for (let i = 0; BackgroundJob.isRunning(); i++) {
         await BackgroundJob.updateNotification({taskDesc: 'Runned -> ' + i});
-        if (i % 50 == 0) {
+        if (i % 100 == 0) {
           console.log('Before req loc');
           _requestLocation();
           console.log('After req loc');

@@ -17,6 +17,7 @@ import {
 } from '@react-navigation/drawer';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import{ AuthContext } from '../components/context';
 
@@ -36,11 +37,11 @@ export function DrawerContent(props) {
                                 source={{
                                     uri: 'https://api.adorable.io/avatars/50/abott@adorable.png'
                                 }}
-                                size={50}
+                                size={40}
                             />
                             <View style={{marginLeft:15, flexDirection:'column'}}>
                                 <Title style={styles.title}>Example User</Title>
-                                <Caption style={styles.caption}>@e_user</Caption>
+                                {/* <Caption style={styles.caption}>@e_user</Caption> */}
                             </View>
                         </View>
 
@@ -81,18 +82,7 @@ export function DrawerContent(props) {
                         />
                         <DrawerItem 
                             icon={({color, size}) => (
-                                <Icon 
-                                name="bookmark-outline" 
-                                color={color}
-                                size={size}
-                                />
-                            )}
-                            label="Bookmarks"
-                            onPress={() => {props.navigation.navigate('BookmarkScreen')}}
-                        />
-                        <DrawerItem 
-                            icon={({color, size}) => (
-                                <Icon 
+                                <Ionicons 
                                 name="settings-outline" 
                                 color={color}
                                 size={size}
@@ -101,17 +91,18 @@ export function DrawerContent(props) {
                             label="Settings"
                             onPress={() => {props.navigation.navigate('SettingsScreen')}}
                         />
-                        <DrawerItem 
-                            icon={({color, size}) => (
-                                <Icon 
-                                name="account-check-outline" 
-                                color={color}
-                                size={size}
-                                />
-                            )}
-                            label="Support"
-                            onPress={() => {props.navigation.navigate('SupportScreen')}}
-                        />
+
+
+
+<Text style={[styles.text_footer, {
+                marginTop: 35
+            }]}></Text>
+
+<Text style={[styles.text_footer, {
+                marginTop: 35
+            }]}></Text>
+
+
                     </Drawer.Section>
                     <Drawer.Section title="Preferences">
                         <TouchableRipple onPress={() => {toggleTheme()}}>

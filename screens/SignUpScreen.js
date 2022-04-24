@@ -15,6 +15,8 @@ import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
+import MaterialComIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 const SignInScreen = ({navigation}) => {
 
@@ -81,8 +83,42 @@ const SignInScreen = ({navigation}) => {
             animation="fadeInUpBig"
             style={styles.footer}
         >
-            <ScrollView>
-            <Text style={styles.text_footer}>Username</Text>
+
+        <ScrollView>
+
+            <Text style={styles.text_footer}>Full Name</Text>
+            <View style={styles.action}>
+                <FontAwesome 
+                    name="user-o"
+                    color="#05375a"
+                    size={20}
+                />
+                <TextInput 
+                    placeholder="Full Name"
+                    style={styles.textInput}
+                    autoCapitalize="none"
+                    // onChangeText={(val) => textInputChange(val)}
+                />
+                {data.check_textInputChange ? 
+                <Animatable.View
+                    animation="bounceIn"
+                >
+                    <Feather 
+                        name="check-circle"
+                        color="green"
+                        size={20}
+                    />
+                </Animatable.View>
+                : null}
+            </View>
+
+
+
+
+
+            <Text style={[styles.text_footer, {
+                marginTop: 35
+            }]}>User name</Text>
             <View style={styles.action}>
                 <FontAwesome 
                     name="user-o"
@@ -107,6 +143,37 @@ const SignInScreen = ({navigation}) => {
                 </Animatable.View>
                 : null}
             </View>
+
+
+            <Text style={[styles.text_footer, {
+                marginTop: 35
+            }]}>Email</Text>
+            <View style={styles.action}>
+                <FontAwesome 
+                    name="envelope-o"
+                    color="#05375a"
+                    size={20}
+                />
+                <TextInput 
+                    placeholder="example@email.com"
+                    style={styles.textInput}
+                    autoCapitalize="none"
+                    // onChangeText={(val) => textInputChange(val)}
+                />
+                {data.check_textInputChange ? 
+                <Animatable.View
+                    animation="bounceIn"
+                >
+                    <Feather 
+                        name="check-circle"
+                        color="green"
+                        size={20}
+                    />
+                </Animatable.View>
+                : null}
+            </View>
+
+
 
             <Text style={[styles.text_footer, {
                 marginTop: 35
@@ -177,6 +244,104 @@ const SignInScreen = ({navigation}) => {
                     }
                 </TouchableOpacity>
             </View>
+
+
+
+
+
+
+
+
+            <Text style={[styles.text_footer, {
+                marginTop: 35
+            }]}>Others Information</Text>
+            <Text style={[styles.text_footer, {
+                marginTop: 35
+            }]}>Height</Text>
+            <View style={styles.action}>
+                <MaterialComIcon 
+                    name="human-male-height"
+                    color="#05375a"
+                    size={20}
+                />
+                <TextInput 
+                    placeholder="Height in cm"
+                    style={styles.textInput}
+                    autoCapitalize="none"
+                    // onChangeText={(val) => textInputChange(val)}
+                />
+                {data.check_textInputChange ? 
+                <Animatable.View
+                    animation="bounceIn"
+                >
+                    <Feather 
+                        name="check-circle"
+                        color="green"
+                        size={20}
+                    />
+                </Animatable.View>
+                : null}
+            </View>
+
+
+            <Text style={[styles.text_footer, {
+                marginTop: 35
+            }]}>Weight</Text>
+            <View style={styles.action}>
+                <FontAwesome5 
+                    name="weight"
+                    color="#05375a"
+                    size={20}
+                />
+                <TextInput 
+                    placeholder="Weight in lb"
+                    style={styles.textInput}
+                    autoCapitalize="none"
+                    // onChangeText={(val) => textInputChange(val)}
+                />
+                {data.check_textInputChange ? 
+                <Animatable.View
+                    animation="bounceIn"
+                >
+                    <Feather 
+                        name="check-circle"
+                        color="green"
+                        size={20}
+                    />
+                </Animatable.View>
+                : null}
+            </View>
+
+            <Text style={[styles.text_footer, {
+                marginTop: 35
+            }]}>Type of WheelChair</Text>
+            <View style={styles.action}>
+                <FontAwesome5 
+                    name="wheelchair"
+                    color="#05375a"
+                    size={20}
+                />
+                <TextInput 
+                    placeholder="Type of wheelchair"
+                    style={styles.textInput}
+                    autoCapitalize="none"
+                    // onChangeText={(val) => textInputChange(val)}
+                />
+                {data.check_textInputChange ? 
+                <Animatable.View
+                    animation="bounceIn"
+                >
+                    <Feather 
+                        name="check-circle"
+                        color="green"
+                        size={20}
+                    />
+                </Animatable.View>
+                : null}
+            </View>
+
+
+
             <View style={styles.textPrivate}>
                 <Text style={styles.color_textPrivate}>
                     By signing up you agree to our
@@ -214,6 +379,10 @@ const SignInScreen = ({navigation}) => {
                 </TouchableOpacity>
             </View>
             </ScrollView>
+
+
+
+
         </Animatable.View>
       </View>
     );
