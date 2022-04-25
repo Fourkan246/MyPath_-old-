@@ -5,7 +5,7 @@ import TimePicker from 'react-native-simple-time-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import CustomButton from '../components/CustomButton';
 import * as RNFS from 'react-native-fs';
-
+import Card from './Card';
 
 
 import Realm from 'realm';
@@ -172,79 +172,84 @@ const DetailsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View>
-        <CustomButton
-        text="Select Start Date!"
-        onPress={() => {
-          setStartTimeMode(true);
-          showDatepicker();
-        }}
-        type="SECONDARY"
-        />
-      </View>
-      <View>
-        <CustomButton
-        text="Select Start Time!"
-        onPress={() => {
-          setStartTimeMode(true);
-          showTimepicker();}
-        }
-        type="SECONDARY"
-        />
-      </View>
-      <Text>selected: {dateStart.toLocaleString()}</Text>
-
-      <View style={styles.space} />
-      <View style={styles.space} />
-
-      <View>
-        <CustomButton
-        text="Select End Date!"
-        onPress={() => 
-          {
-            setStartTimeMode(false);
+      <Card style={{ height: 180, width: '100%' ,backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center',position: 'absolute', top: 10}} >
+        <View>
+          <CustomButton
+          text="Select Start Date!"
+          onPress={() => {
+            setStartTimeMode(true);
             showDatepicker();
           }}
-        type="SECONDARY"
-        />
-      </View>
-      <View>
-        <CustomButton
-        text="Select End Time!"
-        onPress={() => 
-          {
-            setStartTimeMode(false);
-            showTimepicker();
-          }}
-        type="SECONDARY"
-        />
-      </View>
-      <Text>selected: {dateEnd.toLocaleString()}</Text>
-      
-      <View style={styles.space} />
+          type="SECONDARY"
+          />
+        </View>
+        <View>
+          <CustomButton
+          text="Select Start Time!"
+          onPress={() => {
+            setStartTimeMode(true);
+            showTimepicker();}
+          }
+          type="SECONDARY"
+          />
+        </View>
+        <Text>selected: {dateStart.toLocaleString()}</Text>
+      </Card>
 
-      <Text>{text}</Text>
-      <View>
-        <Button onPress={CheckDataAvailibility} title="Check data availability" />
-      </View>
       <View style={styles.space} />
-      <View>
-        <Button
-        disabled = {!enableExportBtn}
-        onPress={ViewData}
-        title="Export data" />
+      
+      <Card style={{ height: 180, width: '100%' ,backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center',position: 'absolute', top: 200}} >
+        <View>
+          <CustomButton
+          text="Select End Date!"
+          onPress={() => 
+            {
+              setStartTimeMode(false);
+              showDatepicker();
+            }}
+          type="SECONDARY"
+          />
+        </View>
+        <View>
+          <CustomButton
+          text="Select End Time!"
+          onPress={() => 
+            {
+              setStartTimeMode(false);
+              showTimepicker();
+            }}
+          type="SECONDARY"
+          />
+        </View>
+        <Text>selected: {dateEnd.toLocaleString()}</Text>
+      </Card>
+
+      <View style={{position: 'absolute', bottom: 15}}>
+        <Text>{text}</Text>
+        <View>
+          <Button onPress={CheckDataAvailibility} title="Check data availability" />
+        </View>
+        <View>
+          <Button
+          disabled = {!enableExportBtn}
+          onPress={ViewData}
+          title="Export data" />
+        </View>
       </View>
-      <View style={styles.space} />
+
       {/* <View>
         <Button
         disabled = {!enableExportBtn}
         onPress={() => navigation.navigate('MapViewScene')}
         title="View path on map" />
       </View> */}
-
+      <View style={styles.space} />
+      <View style={styles.space} />
+      <View style={styles.space} />
+      <View style={styles.space} />
+      <View style={styles.space} />
+      <View style={styles.space} />
       {show && (
-
-
       <DateTimePicker 
           style={{width:'100%'}}
           value={dateStart}

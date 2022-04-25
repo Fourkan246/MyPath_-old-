@@ -10,6 +10,7 @@ import {
   StatusBar,
   Button,
   ActivityIndicator,
+  TouchableWithoutFeedback
 } from 'react-native';
 import {
   accelerometer,
@@ -24,7 +25,7 @@ import {setUpdateIntervalForType, SensorTypes} from 'react-native-sensors';
 import 'intl';
 import 'intl/locale-data/jsonp/en-US';
 import {name as appName} from './app.json';
-
+import Card from './Card';
 const sleep = time => new Promise(resolve => setTimeout(() => resolve(), time));
 
 import Realm from 'realm';
@@ -168,15 +169,15 @@ const HomeScreen = () => {
       // }
 
       for (let i = 0; BackgroundJob.isRunning(); i++) {
-        await BackgroundJob.updateNotification({taskDesc: 'Runned -> ' + i});
+        //await BackgroundJob.updateNotification({taskDesc: 'Runned -> ' + i});
         if (i % 100 == 0) {
-          console.log('Before req loc');
+          //console.log('Before req loc');
           _requestLocation();
-          console.log('After req loc');
+          //console.log('After req loc');
         }
-        console.log('Before store data');
+        //console.log('Before store data');
         StoreData();
-        console.log('After store loc');
+        //console.log('After store loc');
         await sleep(delay);
       }
     });
@@ -213,11 +214,11 @@ const HomeScreen = () => {
   };
 
   //const allObjs = realm.objects("sendata");
-  const [text, setText] = useState('Initial text');
+  const [text, setText] = useState('');
   const onPressHandler = event => {
     const tasks = realm.objects('senData');
     //console.log(`The lists of tasks are: ${tasks.map((task) => task.lng)}`);
-    setText('Total entry : ' + tasks.length);
+    setText('(Total entry : ' + tasks.length + ')');
   };
 
   //=======================
@@ -301,49 +302,83 @@ const HomeScreen = () => {
         {lat.current.toFixed(9) + ' lng: ' + lng.current.toFixed(9)}{' '}
       </Text> */}
 
-      <Text>{text}</Text>
 
-      <Button
-        title={isRunning ? 'Start Logging' : 'Stop Logging'}
-        type="Success"
-        onPress={() => {
-          toggleBackground(isRunning);
-          setIsRunning(!isRunning);
-          onPressHandler();
-        }}
-      />
+
+      {!isRunning?
+        <Card style={{ height: 75, width: '100%' ,backgroundColor: '#5fdba7', justifyContent: 'center', alignItems: 'center',position: 'absolute', top: 0}} >
+          <Text style={{fontSize: 20}}>Running</Text>
+        </Card> : <Card style={{ height: 75, width: '100%' ,backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center',position: 'absolute', top: 0}} >
+          <Text style={{fontSize: 20}}>Stopped</Text>
+        </Card>
+      }
 
       <Text />
+      <Text />
+      <Text/>
+
+
+      <Card style={{ height: 70, width: '40%' ,backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center'}} >
+          {/* {isRunning ?
+            <Text style={{ fontSize: 30 }}>START</Text>
+            : <Text style={{ fontSize: 30 }}>STOP</Text>
+          } */}
+        <TouchableWithoutFeedback
+          onPress={() => {
+            toggleBackground(isRunning);
+            setIsRunning(!isRunning);
+            onPressHandler();
+        }}
+          title={isRunning ? 'Start' : 'Stop'}
+        >
+          {isRunning ?
+            <Text style={{ fontSize: 30 }}>START</Text>
+            : <Text style={{ fontSize: 30 }}>STOP</Text>
+          }
+        </TouchableWithoutFeedback>
+      </Card> 
+      <Text/>
+      <Text>{text}</Text>
+
+
+      <TouchableWithoutFeedback
+        onPress={() => {
+          onPressHandler();
+      }}
+      >
+        <Text style={{ fontSize: 20 }}>Report Barrier</Text>
+      </TouchableWithoutFeedback>
+      <Text/>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          onPressHandler();
+      }}
+      >
+        <Text style={{ fontSize: 20 }}>Report Facility</Text>
+      </TouchableWithoutFeedback>
+
       {/* <Button
-        disabled={loading}
-        title="Get Location"
-        onPress={_requestLocation}
-      />
-
-      {loading ? <ActivityIndicator /> : null}
-        {location ? (
-          <Text style={styles.location}>{JSON.stringify(location, 0, 2)}</Text>
-        ) : null} */}
-
-      <Button
         title="Total entry (Click to update)"
         type="Success"
         onPress={() => {
           onPressHandler();
         }}
-      />
+      /> */}
 
       <Text />
-      <Text style={styles.red}>
-        To log location data you must have to set location access permission to
-        == "Allow all the time"==.
-      </Text>
-      <Button
-        title="Change Location Access Permission"
-        type="Error"
-        onPress={() => Linking.openSettings()}
-      />
-      <StatusBar barStyle="dark-content" />
+      <View style={{position:'absolute', bottom: 0}}>
+        <Text style={styles.red}>
+          To log location data you must have to set location access permission to
+          == "Allow all the time"==.
+        </Text>
+        <Button
+          title="Change Location Access Permission"
+          type="Error"
+          color="#FAA27F"
+          onPress={() => Linking.openSettings()}
+        />
+        <StatusBar barStyle="dark-content" />
+        <Text/>
+      </View>
     </View>
   );
 };
@@ -392,6 +427,9 @@ const styles = StyleSheet.create({
   },
   red: {
     color: 'red',
+  },
+  card: {
+    height: 100, width: '100%' ,backgroundColor: '#5fdba7', justifyContent: 'center', alignItems: 'center',position: 'absolute', top: 0
   },
 });
 export default HomeScreen;

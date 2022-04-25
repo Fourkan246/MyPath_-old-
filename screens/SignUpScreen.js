@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { 
     View, 
     Text, 
@@ -9,7 +9,7 @@ import {
     Platform,
     StyleSheet,
     ScrollView,
-    StatusBar
+    StatusBar,
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
@@ -17,6 +17,9 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialComIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import {Picker} from '@react-native-picker/picker';
+
+
 
 const SignInScreen = ({navigation}) => {
 
@@ -73,6 +76,11 @@ const SignInScreen = ({navigation}) => {
         });
     }
 
+    const [selectedValue, setSelectedValue] = useState("male");
+    const [wc_selectedValue, set_wc_SelectedValue] = useState("mawc");
+    const [wt_selectedValue, set_wt_SelectedValue] = useState("swwc");
+    const [wdt_SelectedValue, set_wdt_SelectedValue] = useState("fwd");
+    
     return (
       <View style={styles.container}>
           <StatusBar backgroundColor='#009387' barStyle="light-content"/>
@@ -314,17 +322,33 @@ const SignInScreen = ({navigation}) => {
 
             <Text style={[styles.text_footer, {
                 marginTop: 35
-            }]}>Type of WheelChair</Text>
+            }]}>Gender</Text>
+            <View style={styles.action}>
+                <Picker
+                    selectedValue={selectedValue}
+                    style={{ height: 50, width: 150 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+                >
+                    <Picker.Item label="Male" value="male" />
+                    <Picker.Item label="Female" value="female" />
+                    <Picker.Item label="I Prefer Not to Say" value="ipns" />
+                </Picker>
+            </View> 
+            
+            <Text style={[styles.text_footer, {
+                marginTop: 35
+            }]}>Age</Text>
             <View style={styles.action}>
                 <FontAwesome5 
-                    name="wheelchair"
+                    name="weight"
                     color="#05375a"
                     size={20}
                 />
                 <TextInput 
-                    placeholder="Type of wheelchair"
+                    placeholder="Age"
                     style={styles.textInput}
                     autoCapitalize="none"
+                    keyboardType = 'number-pad'
                     // onChangeText={(val) => textInputChange(val)}
                 />
                 {data.check_textInputChange ? 
@@ -341,6 +365,146 @@ const SignInScreen = ({navigation}) => {
             </View>
 
 
+            <Text style={[styles.text_footer, {
+                marginTop: 35
+            }]}>Wheelchair Information</Text>
+            <Text style={[styles.text_footer, {
+                marginTop: 35
+            }]}>Type of Wheelchair</Text>
+            <View style={styles.action}>
+                <Picker
+                    selectedValue={selectedValue}
+                    style={{ height: 50, width: 150 }}
+                    onValueChange={(itemValue, itemIndex) => set_wc_SelectedValue(itemValue)}
+                >
+                    <Picker.Item label="Manual Wheelchair" value="mawc" />
+                    <Picker.Item label="Powered Wheelchair" value="powc" />
+                    <Picker.Item label="Power Assist Wheelchair" value="pawc" />
+                    <Picker.Item label="Other Wheelchair" value="owc" />
+                </Picker>
+            </View> 
+
+            <Text style={[styles.text_footer, {
+                marginTop: 35
+            }]}>Number of Wheel</Text>
+            <View style={styles.action}>
+                <FontAwesome
+                    name="wheelchair-alt"
+                    color="#05375a"
+                    size={20}
+                />
+                <TextInput 
+                    placeholder="No of wheel"
+                    style={styles.textInput}
+                    autoCapitalize="none"
+                    keyboardType = 'number-pad'
+                    // onChangeText={(val) => textInputChange(val)}
+                />
+                {data.check_textInputChange ? 
+                <Animatable.View
+                    animation="bounceIn"
+                >
+                    <Feather 
+                        name="check-circle"
+                        color="green"
+                        size={20}
+                    />
+                </Animatable.View>
+                : null}
+            </View>
+
+            <Text style={[styles.text_footer, {
+                marginTop: 35
+            }]}>Wheel Type</Text>
+            <View style={styles.action}>
+                <Picker
+                    selectedValue={selectedValue}
+                    style={{ height: 50, width: 150 }}
+                    onValueChange={(itemValue, itemIndex) => set_wdt_SelectedValue(itemValue)}
+                >
+                    <Picker.Item label="Front Wheel Drive" value="fwd" />
+                    <Picker.Item label="Mid Wheel Drive" value="mwd" />
+                    <Picker.Item label="Rear Wheel Drive" value="rwd" />
+                </Picker>
+            </View> 
+
+            <Text style={[styles.text_footer, {
+                marginTop: 35
+            }]}>Tier Material</Text>
+            <View style={styles.action}>
+                <Picker
+                    selectedValue={selectedValue}
+                    style={{ height: 50, width: 150 }}
+                    onValueChange={(itemValue, itemIndex) => set_wt_SelectedValue(itemValue)}
+                >
+                    <Picker.Item label="Spoke Wheels" value="swwc" />
+                    <Picker.Item label="Meg Wheels" value="mewc" />
+                    <Picker.Item label="Pneumatic Tyres" value="pnwc" />
+                    <Picker.Item label="Solid Tyres" value="sowc" />
+                    <Picker.Item label="Flat Free Tyres" value="ffwc" />
+                    <Picker.Item label="Other" value="other" />
+                </Picker>
+            </View> 
+
+
+            <Text style={[styles.text_footer, {
+                marginTop: 35
+            }]}>Wheelchair width</Text>
+            <View style={styles.action}>
+                <FontAwesome5
+                    name="wheelchair"
+                    color="#05375a"
+                    size={20}
+                />
+                <TextInput 
+                    placeholder="wheel chair width"
+                    style={styles.textInput}
+                    autoCapitalize="none"
+                    keyboardType = 'number-pad'
+                    // onChangeText={(val) => textInputChange(val)}
+                />
+                {data.check_textInputChange ? 
+                <Animatable.View
+                    animation="bounceIn"
+                >
+                    <Feather 
+                        name="check-circle"
+                        color="green"
+                        size={20}
+                    />
+                </Animatable.View>
+                : null}
+            </View>
+
+
+            <Text style={[styles.text_footer, {
+                marginTop: 35
+            }]}>Seat to Floor Height</Text>
+            <View style={styles.action}>
+                <FontAwesome5
+                    name="wheelchair"
+                    color="#05375a"
+                    size={20}
+                />
+                <TextInput 
+                    placeholder="Seat to floor height"
+                    style={styles.textInput}
+                    autoCapitalize="none"
+                    keyboardType = 'number-pad'
+                    // onChangeText={(val) => textInputChange(val)}
+                />
+                {data.check_textInputChange ? 
+                <Animatable.View
+                    animation="bounceIn"
+                >
+                    <Feather 
+                        name="check-circle"
+                        color="green"
+                        size={20}
+                    />
+                </Animatable.View>
+                : null}
+            </View>
 
             <View style={styles.textPrivate}>
                 <Text style={styles.color_textPrivate}>

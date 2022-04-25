@@ -17,11 +17,11 @@ const styles = StyleSheet.create({
     },
     container_PRIMARY: {
         width: "30%",
-        backgroundColor: '#3B71F3',
+        backgroundColor: '#FFFFFF',
     },
     container_SECONDARY: {
         width: "50%",
-        backgroundColor: '#3B71F3',
+        backgroundColor: '#01BCAD',
     },
     container_TERTIARY: {
         width: "50%",

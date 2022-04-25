@@ -92,15 +92,13 @@ export function DrawerContent(props) {
                             onPress={() => {props.navigation.navigate('SettingsScreen')}}
                         />
 
+                    <Text style={[styles.text_footer, {
+                                    marginTop: 35
+                                }]}></Text>
 
-
-<Text style={[styles.text_footer, {
-                marginTop: 35
-            }]}></Text>
-
-<Text style={[styles.text_footer, {
-                marginTop: 35
-            }]}></Text>
+                    <Text style={[styles.text_footer, {
+                                    marginTop: 35
+                                }]}></Text>
 
 
                     </Drawer.Section>
