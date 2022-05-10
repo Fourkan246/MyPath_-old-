@@ -36,7 +36,7 @@ const SplashScreen = ({navigation}) => {
         >
             <Text style={[styles.title, {
                 color: colors.text
-            }]}>MyPath!</Text>
+            }]}>MyPath</Text>
             <Text style={styles.text}>Identifying Surface Characteristics for Generating Personalized Accessible Routes for Wheelchair Users through Participatory Sensing</Text>
             <View style={styles.button}>
             <TouchableOpacity onPress={()=>navigation.navigate('SignInScreen')}>
@@ -44,7 +44,7 @@ const SplashScreen = ({navigation}) => {
                     colors={['#08d4c4', '#01ab9d']}
                     style={styles.signIn}
                 >
-                    <Text style={styles.textSign}>Get Started!</Text>
+                    <Text style={styles.textSign}>Get Started</Text>
                     <MaterialIcons 
                         name="navigate-next"
                         color="#fff"

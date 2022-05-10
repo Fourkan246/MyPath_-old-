@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { 
     View, 
     Text, 
@@ -10,6 +10,8 @@ import {
     StyleSheet,
     ScrollView,
     StatusBar,
+    SafeAreaView,
+    LogBox
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
@@ -18,10 +20,15 @@ import Feather from 'react-native-vector-icons/Feather';
 import MaterialComIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {Picker} from '@react-native-picker/picker';
-
+import DropDownPicker from 'react-native-dropdown-picker';
 
 
 const SignInScreen = ({navigation}) => {
+
+    useEffect(() => {
+        LogBox.ignoreLogs(['VirtualizedLists should never be nested',]);
+    }, [])
+    DropDownPicker.setListMode("SCROLLVIEW");
 
     const [data, setData] = React.useState({
         username: '',
@@ -76,23 +83,56 @@ const SignInScreen = ({navigation}) => {
         });
     }
 
-    const [selectedValue, setSelectedValue] = useState("male");
-    const [wc_selectedValue, set_wc_SelectedValue] = useState("mawc");
-    const [wt_selectedValue, set_wt_SelectedValue] = useState("swwc");
-    const [wdt_SelectedValue, set_wdt_SelectedValue] = useState("fwd");
-    
+    const [openGender, setOpenGender] = useState(false);
+    const [valueGender, setValueGender] = useState(null);
+    const [itemsGender, setItemsGender] = useState([
+      {label: 'Man', value: 'man'},
+      {label: 'Woman', value: 'woman'},
+      {label: 'Transgender', value: 'tg'},
+      {label: 'Non-binary/Non-conforming', value: 'nb'},
+      {label: 'Prefer not to respond', value: 'pn'},
+    ]);
+
+    const [openWC, setOpenWC] = useState(false);
+    const [valueWC, setValueWC] = useState(null);
+    const [itemsWC, setItemsWC] = useState([
+      {label: 'Manual Wheelchair', value: 'mawc'},
+      {label: 'Powered Wheelchair', value: 'powc'},
+      {label: 'Power Assist Wheelchair', value: 'pawc'},
+      {label: 'Other Wheelchair', value: 'owc'},
+    ]);
+
+    const [openWT, setOpenWT] = useState(false);
+    const [valueWT, setValueWT] = useState(null);
+    const [itemsWT, setItemsWT] = useState([
+      {label: 'Front Wheel Drive', value: 'fwd'},
+      {label: 'Mid Wheel Drive', value: 'mwd'},
+      {label: 'Rear Wheel Drive', value: 'rwd'},
+    ]);
+
+    const [openTM, setOpenTM] = useState(false);
+    const [valueTM, setValueTM] = useState(null);
+    const [itemsTM, setItemsTM] = useState([
+      {label: 'Spoke Wheels', value: 'swwc'},
+      {label: 'Meg Wheels', value: 'mewc'},
+      {label: 'Pneumatic Tyres', value: 'pnwc'},
+      {label: 'Solid Tyres', value: 'sowc'},
+      {label: 'Flat Free Tyres', value: 'ffwc'},
+      {label: 'Other', value: 'other'},
+    ]);
+
     return (
       <View style={styles.container}>
           <StatusBar backgroundColor='#009387' barStyle="light-content"/>
         <View style={styles.header}>
-            <Text style={styles.text_header}>Register Now!</Text>
+            <Text style={styles.text_header}>Register Now</Text>
         </View>
         <Animatable.View 
             animation="fadeInUpBig"
             style={styles.footer}
         >
 
-        <ScrollView>
+        <ScrollView nestedScrollEnabled={true}>
 
             <Text style={styles.text_footer}>Full Name</Text>
             <View style={styles.action}>
@@ -323,17 +363,18 @@ const SignInScreen = ({navigation}) => {
             <Text style={[styles.text_footer, {
                 marginTop: 35
             }]}>Gender</Text>
+            
             <View style={styles.action}>
-                <Picker
-                    selectedValue={selectedValue}
-                    style={{ height: 50, width: 150 }}
-                    onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
-                >
-                    <Picker.Item label="Male" value="male" />
-                    <Picker.Item label="Female" value="female" />
-                    <Picker.Item label="I Prefer Not to Say" value="ipns" />
-                </Picker>
-            </View> 
+                <DropDownPicker 
+                    open={openGender}
+                    value={valueGender}
+                    items={itemsGender}
+                    setOpen={setOpenGender}
+                    setValue={setValueGender}
+                    setItems={setItemsGender}
+                    dropDownDirection="TOP"
+                />
+            </View>
             
             <Text style={[styles.text_footer, {
                 marginTop: 35
@@ -372,21 +413,22 @@ const SignInScreen = ({navigation}) => {
                 marginTop: 35
             }]}>Type of Wheelchair</Text>
             <View style={styles.action}>
-                <Picker
-                    selectedValue={selectedValue}
-                    style={{ height: 50, width: 150 }}
-                    onValueChange={(itemValue, itemIndex) => set_wc_SelectedValue(itemValue)}
-                >
-                    <Picker.Item label="Manual Wheelchair" value="mawc" />
-                    <Picker.Item label="Powered Wheelchair" value="powc" />
-                    <Picker.Item label="Power Assist Wheelchair" value="pawc" />
-                    <Picker.Item label="Other Wheelchair" value="owc" />
-                </Picker>
+                <View style={styles.action}>
+                    <DropDownPicker 
+                        open={openWC}
+                        value={valueWC}
+                        items={itemsWC}
+                        setOpen={setOpenWC}
+                        setValue={setValueWC}
+                        setItems={setItemsWC}
+                        dropDownDirection="TOP"
+                    />
+                </View>
             </View> 
 
             <Text style={[styles.text_footer, {
                 marginTop: 35
-            }]}>Number of Wheel</Text>
+            }]}>Number of Wheels</Text>
             <View style={styles.action}>
                 <FontAwesome
                     name="wheelchair-alt"
@@ -394,7 +436,7 @@ const SignInScreen = ({navigation}) => {
                     size={20}
                 />
                 <TextInput 
-                    placeholder="No of wheel"
+                    placeholder="Number of wheels"
                     style={styles.textInput}
                     autoCapitalize="none"
                     keyboardType = 'number-pad'
@@ -417,39 +459,36 @@ const SignInScreen = ({navigation}) => {
                 marginTop: 35
             }]}>Wheel Type</Text>
             <View style={styles.action}>
-                <Picker
-                    selectedValue={selectedValue}
-                    style={{ height: 50, width: 150 }}
-                    onValueChange={(itemValue, itemIndex) => set_wdt_SelectedValue(itemValue)}
-                >
-                    <Picker.Item label="Front Wheel Drive" value="fwd" />
-                    <Picker.Item label="Mid Wheel Drive" value="mwd" />
-                    <Picker.Item label="Rear Wheel Drive" value="rwd" />
-                </Picker>
+                <DropDownPicker 
+                    open={openWT}
+                    value={valueWT}
+                    items={itemsWT}
+                    setOpen={setOpenWT}
+                    setValue={setValueWT}
+                    setItems={setItemsWT}
+                    dropDownDirection="TOP"
+                />
             </View> 
 
             <Text style={[styles.text_footer, {
                 marginTop: 35
-            }]}>Tier Material</Text>
+            }]}>Tires Material</Text>
             <View style={styles.action}>
-                <Picker
-                    selectedValue={selectedValue}
-                    style={{ height: 50, width: 150 }}
-                    onValueChange={(itemValue, itemIndex) => set_wt_SelectedValue(itemValue)}
-                >
-                    <Picker.Item label="Spoke Wheels" value="swwc" />
-                    <Picker.Item label="Meg Wheels" value="mewc" />
-                    <Picker.Item label="Pneumatic Tyres" value="pnwc" />
-                    <Picker.Item label="Solid Tyres" value="sowc" />
-                    <Picker.Item label="Flat Free Tyres" value="ffwc" />
-                    <Picker.Item label="Other" value="other" />
-                </Picker>
+                <DropDownPicker 
+                    open={openTM}
+                    value={valueTM}
+                    items={itemsTM}
+                    setOpen={setOpenTM}
+                    setValue={setValueTM}
+                    setItems={setItemsTM}
+                    dropDownDirection="TOP"
+                />
             </View> 
 
 
             <Text style={[styles.text_footer, {
                 marginTop: 35
-            }]}>Wheelchair width</Text>
+            }]}>Wheelchair Width</Text>
             <View style={styles.action}>
                 <FontAwesome5
                     name="wheelchair"
@@ -457,7 +496,7 @@ const SignInScreen = ({navigation}) => {
                     size={20}
                 />
                 <TextInput 
-                    placeholder="wheel chair width"
+                    placeholder="wheel chair width (in cm)"
                     style={styles.textInput}
                     autoCapitalize="none"
                     keyboardType = 'number-pad'
@@ -487,7 +526,7 @@ const SignInScreen = ({navigation}) => {
                     size={20}
                 />
                 <TextInput 
-                    placeholder="Seat to floor height"
+                    placeholder="Seat to floor height (in cm)"
                     style={styles.textInput}
                     autoCapitalize="none"
                     keyboardType = 'number-pad'

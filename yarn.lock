@@ -7358,6 +7358,11 @@
     "jscodeshift" "^0.11.0"
     "nullthrows" "^1.1.1"
 
+"react-native-dropdown-picker@^5.4.2":
+  "integrity" "sha512-cZBPyN+k52jA9XguFnKoF5tLf31z6gjZ8GijO/pfVNSSEtPwZ14UTUrr87JiiOnMh5K/O2kRzZ/jZN8D0MmUMA=="
+  "resolved" "https://registry.npmjs.org/react-native-dropdown-picker/-/react-native-dropdown-picker-5.4.2.tgz"
+  "version" "5.4.2"
+
 "react-native-dynamic-vector-icons@>= 1.1.4":
   "integrity" "sha512-tz098Wv/4TI70BRWfshSyVzWsoV4PRdp6fMMA7GRmxsaERfYshEy3Rs3bvD9tVjD+zKUcmM4Ce7bmAoJkGSNdg=="
   "resolved" "https://registry.npmjs.org/react-native-dynamic-vector-icons/-/react-native-dynamic-vector-icons-1.1.6.tgz"
@@ -7435,6 +7440,11 @@
   "version" "0.12.0"
   dependencies:
     "prop-types" "^15.5.9"
+
+"react-native-modal-picker@^0.0.16":
+  "integrity" "sha1-yTJNiAo7uPNrdy83gWSXfi9DHLw="
+  "resolved" "https://registry.npmjs.org/react-native-modal-picker/-/react-native-modal-picker-0.0.16.tgz"
+  "version" "0.0.16"
 
 "react-native-paper@^4.12.0", "react-native-paper@>= 3.0.0":
   "integrity" "sha512-4g9bbxbxTkylcriYy8W+EgXo71mrZHhIm044G+4LTp0JaOEWjGJm571OwV5pPAMwN1N8xUs24ymvHfpOjqHpaw=="

@@ -117,7 +117,7 @@ const SignInScreen = ({navigation}) => {
     <View style={styles.container}>
       <StatusBar backgroundColor="#009387" barStyle="light-content" />
       <View style={styles.header}>
-        <Text style={styles.text_header}>Welcome!</Text>
+        <Text style={styles.text_header}>Welcome</Text>
       </View>
       <Animatable.View
         animation="fadeInUpBig"
@@ -139,7 +139,7 @@ const SignInScreen = ({navigation}) => {
         <View style={styles.action}>
           <FontAwesome name="user-o" color={colors.text} size={20} />
           <TextInput
-            placeholder="Your Username"
+            placeholder="Your Username (use 'user1' for testing)"
             placeholderTextColor="#666666"
             style={[
               styles.textInput,
@@ -178,7 +178,7 @@ const SignInScreen = ({navigation}) => {
         <View style={styles.action}>
           <Feather name="lock" color={colors.text} size={20} />
           <TextInput
-            placeholder="Your Password"
+            placeholder="Your Password (use 'password' for testing)"
             placeholderTextColor="#666666"
             secureTextEntry={data.secureTextEntry ? true : false}
             style={[
