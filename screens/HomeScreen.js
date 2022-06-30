@@ -1,7 +1,9 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useCallback, useState, useEffect, useRef} from 'react';
 import {
   StyleSheet,
   Text,
+  PermissionsAndroid,
+  ToastAndroid,
   View,
   Platform,
   Linking,
@@ -18,6 +20,13 @@ import {
   gyroscope,
   barometer,
 } from 'react-native-sensors';
+
+
+import BackgroundTimer from 'react-native-background-timer';
+import Geolocation from 'react-native-geolocation-service';
+import VIForegroundService from 'react-native-foreground-service';
+
+
 import GetLocation from 'react-native-get-location';
 import CustomButton from '../components/CustomButton';
 import BackgroundJob from 'react-native-background-actions';
@@ -51,6 +60,292 @@ const TaskSchema = {
 };
 
 const HomeScreen = () => {
+
+  
+  //===============================================
+  //===============================================
+  
+  
+  const [forceLocation, setForceLocation] = useState(true);
+  const [highAccuracy, setHighAccuracy] = useState(true);
+  const [locationDialog, setLocationDialog] = useState(true);
+  const [significantChanges, setSignificantChanges] = useState(false);
+  const [observing, setObserving] = useState(false);
+  const [foregroundService, setForegroundService] = useState(false);
+  const [useLocationManager, setUseLocationManager] = useState(false);
+  const [location_new, setLocation_new] = useState(null);
+
+  const watchId = useRef(null);
+
+  const [backgroundTimerId, setBackgroundTimerId] = useState(0)
+
+
+
+  useEffect(() => {
+    return () => {
+      removeLocationUpdates();
+    };
+  }, [removeLocationUpdates]);
+
+
+  const onBackTest = () => {
+
+    setUpdateIntervalForType(SensorTypes.accelerometer, 20);
+    setUpdateIntervalForType(SensorTypes.magnetometer, 20);
+    setUpdateIntervalForType(SensorTypes.gyroscope, 20);
+    setUpdateIntervalForType(SensorTypes.barometer, 20);
+
+    // Start a timer that runs continuous after X milliseconds
+    const intervalId = BackgroundTimer.setInterval(() => {
+      // this will be executed every 20 ms
+      // even when app is the the background
+      try {
+        const subscription_acc = accelerometer.subscribe(
+          ({x, y, z, timestamp}) => {
+            ax.current = x;
+            ay.current = y;
+            az.current = z;
+            // let date = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(timestamp);
+          },
+        );
+      } catch (error) {}
+
+      try {
+        const subscription_mag = magnetometer.subscribe(
+          ({x, y, z, timestamp}) => {
+            mx.current = x;
+            my.current = y;
+            mz.current = z;
+          },
+        );
+      } catch (error) {}
+
+      try {
+        const subscription_gyr = gyroscope.subscribe(({x, y, z, timestamp}) => {
+          gx.current = x;
+          gy.current = y;
+          gz.current = z;
+          //console.log({x, y, z, timestamp});
+          //storeData(timestamp.toString(), 0, 0, 0, 0, 0, 0, x.toString(), y.toString(), z.toString(), 0, 0, 0);
+        });
+      } catch (error) {}
+
+      // try {
+      //    const subscription_bar = barometer.subscribe(({pressure, timestamp}) => {
+      //    p.current = pressure;
+      //    //console.log({pressure, timestamp});
+      //    //storeData(timestamp.toString(), 0, 0, 0, 0, 0, 0, 0, 0, 0, pressure, 0, 0, 0);
+      //  });
+      // } catch (error) {
+      // }
+
+      console.log('tic');
+      StoreData();
+    }, 20);
+
+    setBackgroundTimerId(intervalId);
+  };
+
+  const StopBackgroundTimer = () =>
+  {
+      BackgroundTimer.stop();
+      BackgroundTimer.clearInterval(backgroundTimerId);
+  }
+
+  const hasPermissionIOS = async () => {
+    const openSetting = () => {
+      Linking.openSettings().catch(() => {
+        Alert.alert('Unable to open settings');
+      });
+    };
+    const status = await Geolocation.requestAuthorization('whenInUse');
+
+    if (status === 'granted') {
+      return true;
+    }
+
+    if (status === 'denied') {
+      Alert.alert('Location permission denied');
+    }
+
+    if (status === 'disabled') {
+      Alert.alert(
+        `Turn on Location Services to allow "${appConfig.displayName}" to determine your location.`,
+        '',
+        [
+          { text: 'Go to Settings', onPress: openSetting },
+          { text: "Don't Use Location", onPress: () => {} },
+        ],
+      );
+    }
+
+    return false;
+  };
+
+  const hasLocationPermission = async () => {
+    if (Platform.OS === 'ios') {
+      const hasPermission = await hasPermissionIOS();
+      return hasPermission;
+    }
+
+    if (Platform.OS === 'android' && Platform.Version < 23) {
+      return true;
+    }
+
+    const hasPermission = await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    );
+
+    if (hasPermission) {
+      return true;
+    }
+
+    const status = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    );
+
+    if (status === PermissionsAndroid.RESULTS.GRANTED) {
+      return true;
+    }
+
+    if (status === PermissionsAndroid.RESULTS.DENIED) {
+      ToastAndroid.show(
+        'Location permission denied by user.',
+        ToastAndroid.LONG,
+      );
+    } else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+      ToastAndroid.show(
+        'Location permission revoked by user.',
+        ToastAndroid.LONG,
+      );
+    }
+
+    return false;
+  };
+
+
+
+  const getLocation = async () => {
+    const hasPermission = await hasLocationPermission();
+
+    if (!hasPermission) {
+      return;
+    }
+
+    Geolocation.getCurrentPosition(
+      (position) => {
+        setLocation_new(position);
+        console.log(position);
+      },
+      (error) => {
+        Alert.alert(`Code ${error.code}`, error.message);
+        setLocation_new(null);
+        console.log(error);
+      },
+      {
+        accuracy: {
+          android: 'high',
+          ios: 'best',
+        },
+        enableHighAccuracy: highAccuracy,
+        timeout: 15000,
+        maximumAge: 10000,
+        distanceFilter: 0,
+        forceRequestLocation: forceLocation,
+        forceLocationManager: useLocationManager,
+        showLocationDialog: locationDialog,
+      },
+    );
+  };
+
+  const getLocationUpdates = async () => {
+    const hasPermission = await hasLocationPermission();
+    if (!hasPermission) {
+      return;
+    }
+
+    if (Platform.OS === 'android' && foregroundService) {
+      await startForegroundService();
+    }
+
+    setObserving(true);
+
+    watchId.current = Geolocation.watchPosition(
+      (position) => {
+        setLocation_new(position);
+        console.log(position);
+        lat.current = position.latitude;
+        lng.current = position.longitude;
+      },
+      (error) => {
+        setLocation_new(null);
+        console.log(error);
+      },
+      {
+        accuracy: {
+          android: 'high',
+          ios: 'best',
+        },
+        enableHighAccuracy: highAccuracy,
+        distanceFilter: 0,
+        interval: 5000,
+        fastestInterval: 2000,
+        forceRequestLocation: forceLocation,
+        forceLocationManager: useLocationManager,
+        showLocationDialog: locationDialog,
+        useSignificantChanges: significantChanges,
+      },
+    );
+  };
+
+
+
+  
+  const removeLocationUpdates = useCallback(() => {
+    if (watchId.current !== null) {
+      Geolocation.clearWatch(watchId.current);
+      watchId.current = null;
+      setObserving(false);
+      stopForegroundService();
+    }
+  }, [stopForegroundService]);
+
+  const startForegroundService = async () => {
+    if (Platform.Version >= 26) {
+      await VIForegroundService.createNotificationChannel({
+        id: 'locationChannel',
+        name: 'Location Tracking Channel',
+        description: 'Tracks location of user',
+        enableVibration: false,
+      });
+    }
+
+    return VIForegroundService.startService({
+      channelId: 'locationChannel',
+      id: 420,
+      title: appConfig.displayName,
+      text: 'Tracking location updates',
+      icon: 'ic_launcher',
+    });
+  };
+
+  const stopForegroundService = useCallback(() => {
+    VIForegroundService.stopService().catch((err) => err);
+  }, []);
+
+
+
+
+  //===============================================
+  //===============================================
+
+
+
+
+
+
+
+
   const [realm, setRealm] = React.useState(null);
   const [tasks, setTasks] = React.useState([]);
 
@@ -263,7 +558,6 @@ const HomeScreen = () => {
       });
   };
 
-  //=======================
 
   //<CurrentLocation state={state} dispatch={dispatch} />
   const [isRunning, setIsRunning] = useState(true);
@@ -324,9 +618,20 @@ const HomeScreen = () => {
           } */}
         <TouchableWithoutFeedback
           onPress={() => {
+            //getLocationUpdates();
+            //onPressHandler();
+
             toggleBackground(isRunning);
             setIsRunning(!isRunning);
-            onPressHandler();
+            if(!observing)
+            {
+              getLocationUpdates();
+              onBackTest();
+            }else{
+              removeLocationUpdates();
+              StopBackgroundTimer();
+              //BackgroundTimer.clearInterval(backgroundTimerId);
+            }
         }}
           title={isRunning ? 'Start' : 'Stop'}
         >

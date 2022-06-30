@@ -26,6 +26,8 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>UISupportsDocumentBrowser</key>
+	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
@@ -37,6 +39,10 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Give me permission</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Give me permission</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs to get your location...</string>
 	<key>UIAppFonts</key>
@@ -60,8 +66,7 @@
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>audio</string>
-		<string>fetch</string>
+		<string>location</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

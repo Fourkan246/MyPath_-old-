@@ -1,12 +1,12 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { Alert, Button, Text, StyleSheet, View, SafeAreaView} from 'react-native';
+import { Alert, Button, Text, StyleSheet, View, Platform, SafeAreaView} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import TimePicker from 'react-native-simple-time-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import CustomButton from '../components/CustomButton';
 import * as RNFS from 'react-native-fs';
 import Card from './Card';
-
+import Share from 'react-native-share';
 
 import Realm from 'realm';
 const TaskSchema = {
@@ -102,36 +102,10 @@ const DetailsScreen = () => {
     showMode('time');
   };
 
+
+  //==============================================================================
+
   const ViewData = () => {
-
-    // require the module
-   
-
-    // create a path you want to write to
-    // :warning: on iOS, you cannot write into `RNFS.MainBundlePath`,
-    // but `RNFS.DocumentDirectoryPath` exists on both platforms and is writable
-    var path = RNFS.LibraryDirectoryPath + '/test.txt';
-
-    // write the file
-    RNFS.writeFile(path, 'Lorem ipsum dolor sit amet', 'utf8')
-      .then((success) => {
-        console.log('FILE WRITTEN!' + path);
-        Alert.alert("Done!",
-          "Location : " + path,
-          [
-          {style: 'destructive'},
-          {text: 'Cancel'},
-          ],
-          {cancelable: false}
-        )
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-
-
-
-
 
 
     const availableData = realm.objects("senData").filtered(
@@ -139,7 +113,7 @@ const DetailsScreen = () => {
     );
     console.log(`The lists of tasks are: ${availableData.map((availableD) => availableD.time_stamp)}`);
       console.log(typeof availableData);
-    var path = '/storage/emulated/0/Android/data/com.mypath/files' + '/';
+    //var path = '/storage/emulated/0/Android/data/com.mypath/files' + '/';
     var textData = "time_stamp, ax, ay, az, gx, gy, gz, mx, my, mz, lat, lng, p" + '\n';
 
     for (var i = 0;  i < availableData.length ; i++) {
@@ -149,10 +123,34 @@ const DetailsScreen = () => {
                +  availableData[i].mz + "," + availableData[i].lat + "," + availableData[i].lng + "," + availableData[i].p + "\n";
     }
 
+    
+    // RNFS.appendFile(fileLoc, textData, 'utf8')
+    //     .then((success) => {
+    //     console.log('FILE WRITTEN!');
+    //     Alert.alert("Done!",
+    //       "Location : " + fileLoc,
+    //       [
+    //       {style: 'destructive'},
+    //       {text: 'Cancel'},
+    //       ],
+    //       {cancelable: false}
+    //     )
+    //   })
+    //   .catch((err) => {
+    //     console.log(err.message);
+    //   });
+
+
+
+    //var RNFS = require('react-native-fs');
+    var path = '/storage/emulated/0/Android/data/com.mypath/files' + '/';
+    if (Platform.OS === 'ios') {
+      path = RNFS.DocumentDirectoryPath + '/';
+    }
 
     var fileLoc = path + Date.now() +".csv";
-    RNFS.appendFile(fileLoc, textData, 'utf8')
-        .then((success) => {
+    RNFS.writeFile(fileLoc, textData, 'utf8')
+      .then((success) => {
         console.log('FILE WRITTEN!');
         Alert.alert("Done!",
           "Location : " + fileLoc,
@@ -166,6 +164,7 @@ const DetailsScreen = () => {
       .catch((err) => {
         console.log(err.message);
       });
+
   };
   
 
