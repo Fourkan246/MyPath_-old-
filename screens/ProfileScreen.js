@@ -224,11 +224,11 @@ const ProfileScreen = () => {
     return (
       <View style={styles.container}>
         <Text>Profile Screen</Text>
-        <Button
+        {/* <Button
           title="Click Here"
           onPress={() => alert('Button Clicked!')}
-        />
-        <Button
+        /> */}
+        {/* <Button
           title={'test/check'}
           type="Success"
 
@@ -241,7 +241,7 @@ const ProfileScreen = () => {
             }
             
         }}
-        />
+        /> */}
       </View>
     );
 };

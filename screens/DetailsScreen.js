@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { Alert, Button, Text, StyleSheet, View, Platform, SafeAreaView} from 'react-native';
+import { Alert, Button, Text, StyleSheet, View, Platform, SafeAreaView, PermissionsAndroid} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import TimePicker from 'react-native-simple-time-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -7,6 +7,7 @@ import CustomButton from '../components/CustomButton';
 import * as RNFS from 'react-native-fs';
 import Card from './Card';
 import Share from 'react-native-share';
+import RNFetchBlob from 'rn-fetch-blob'
 
 import Realm from 'realm';
 const TaskSchema = {
@@ -34,8 +35,8 @@ const DetailsScreen = () => {
 
   const navigation = useNavigation();
 
-  const [dateStart, setDateStart] = useState(new Date(1647408851080));
-  const [dateEnd, setDateEnd] = useState(new Date(1647401188529));
+  const [dateStart, setDateStart] = useState(new Date(Date.now()-10000000));
+  const [dateEnd, setDateEnd] = useState(new Date(Date.now()));
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
   const [startTimeMode, setStartTimeMode] = useState(true);
@@ -105,9 +106,7 @@ const DetailsScreen = () => {
 
   //==============================================================================
 
-  const ViewData = () => {
-
-
+  const ViewData = async () => {
     const availableData = realm.objects("senData").filtered(
       dateStart.getTime() + " <= time_stamp && time_stamp <= " + dateEnd.getTime()
     );
@@ -123,32 +122,12 @@ const DetailsScreen = () => {
                +  availableData[i].mz + "," + availableData[i].lat + "," + availableData[i].lng + "," + availableData[i].p + "\n";
     }
 
-    
-    // RNFS.appendFile(fileLoc, textData, 'utf8')
-    //     .then((success) => {
-    //     console.log('FILE WRITTEN!');
-    //     Alert.alert("Done!",
-    //       "Location : " + fileLoc,
-    //       [
-    //       {style: 'destructive'},
-    //       {text: 'Cancel'},
-    //       ],
-    //       {cancelable: false}
-    //     )
-    //   })
-    //   .catch((err) => {
-    //     console.log(err.message);
-    //   });
-
-
-
-    //var RNFS = require('react-native-fs');
     var path = '/storage/emulated/0/Android/data/com.mypath/files' + '/';
     if (Platform.OS === 'ios') {
       path = RNFS.DocumentDirectoryPath + '/';
     }
 
-    var fileLoc = path + Date.now() +".csv";
+    var fileLoc = path + "MyPath_"+ Date.now() +".csv";
     RNFS.writeFile(fileLoc, textData, 'utf8')
       .then((success) => {
         console.log('FILE WRITTEN!');
@@ -164,10 +143,7 @@ const DetailsScreen = () => {
       .catch((err) => {
         console.log(err.message);
       });
-
   };
-  
-
 
   return (
     <View style={styles.container}>

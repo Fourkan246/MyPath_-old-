@@ -22,6 +22,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {Picker} from '@react-native-picker/picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignInScreen = ({navigation}) => {
 
@@ -31,28 +32,51 @@ const SignInScreen = ({navigation}) => {
     DropDownPicker.setListMode("SCROLLVIEW");
 
     const [data, setData] = React.useState({
-        username: '',
+        fullName: '',
+        email: '',
         password: '',
         confirm_password: '',
-        check_textInputChange: false,
+        check_fullNameChange: false,
+        check_emailChange: false,
         secureTextEntry: true,
-        confirm_secureTextEntry: true,
     });
 
-    const textInputChange = (val) => {
-        if( val.length !== 0 ) {
+    const handleUserFullNameChange = (val) => {
+        if(val.length > 5)
+        {
             setData({
                 ...data,
-                username: val,
-                check_textInputChange: true
+                fullName: val,
+                check_fullNameChange: true
             });
-        } else {
+        }else{
             setData({
                 ...data,
-                username: val,
-                check_textInputChange: false
+                fullName: val,
+                check_fullNameChange: false
             });
         }
+    }
+
+    const handleEmailChange = (val) => {
+        if(isValidEmail(val))
+        {
+            setData({
+                ...data,
+                email: val,
+                check_emailChange: true
+            });
+        }else{
+            setData({
+                ...data,
+                email: val,
+                check_emailChange: false
+            });
+        }
+    }
+
+    const isValidEmail = (email) => {
+        return /\S+@\S+\.\S+/.test(email);
     }
 
     const handlePasswordChange = (val) => {
@@ -76,12 +100,6 @@ const SignInScreen = ({navigation}) => {
         });
     }
 
-    const updateConfirmSecureTextEntry = () => {
-        setData({
-            ...data,
-            confirm_secureTextEntry: !data.confirm_secureTextEntry
-        });
-    }
 
     const [openGender, setOpenGender] = useState(false);
     const [valueGender, setValueGender] = useState(null);
@@ -121,6 +139,69 @@ const SignInScreen = ({navigation}) => {
       {label: 'Other', value: 'other'},
     ]);
 
+    const isValidPass = () => {
+        if(data.password.length < 6)
+        {
+            alert("password length can not be less than 6");
+            return false;
+        }
+        if(data.confirm_password.length < 6)
+        {
+            alert("confirm password length can not be less than 6");
+            return false;
+        }
+
+        if(data.password != data.confirm_password)
+        {
+            alert("Mismatched in password and confirm password");
+            return false;
+        }
+
+        return true;
+    }
+
+    const validateAndStore = () =>{
+        if(!data.check_fullNameChange)
+        {
+            alert("Error in Full Name");
+            return;
+        }
+        if(!data.check_emailChange)
+        {
+            alert("Error in Email Address");
+            return;
+        }
+        if(!isValidPass()){
+            return;
+        }
+
+        saveData("fullName", data.fullName);
+        saveData("email", data.email);
+        saveData("password", data.password);
+        alert("Information saved successfully!");
+        navigation.goBack();
+    }
+
+    const saveData = async (key,data) => {
+        try {
+            await AsyncStorage.setItem(key, data)
+            //alert('Data successfully saved')
+        } catch (e) {
+            alert('Failed to save the data to the storage')
+        }
+    }
+
+    const readData = async (key) => {
+        try {
+            const value = await AsyncStorage.getItem(key);
+            if (value !== null) {
+                alert(value)
+            }
+        } catch (e) {
+            alert('Failed to fetch the input from storage');
+        }
+    };
+
     return (
       <View style={styles.container}>
           <StatusBar backgroundColor='#009387' barStyle="light-content"/>
@@ -143,11 +224,12 @@ const SignInScreen = ({navigation}) => {
                 />
                 <TextInput 
                     placeholder="Full Name"
+                    placeholderTextColor="#666666"
                     style={styles.textInput}
                     autoCapitalize="none"
-                    // onChangeText={(val) => textInputChange(val)}
+                    onChangeText={(val) => handleUserFullNameChange(val)}
                 />
-                {data.check_textInputChange ? 
+                {data.check_fullNameChange ? 
                 <Animatable.View
                     animation="bounceIn"
                 >
@@ -159,39 +241,6 @@ const SignInScreen = ({navigation}) => {
                 </Animatable.View>
                 : null}
             </View>
-
-
-
-
-
-            <Text style={[styles.text_footer, {
-                marginTop: 35
-            }]}>User name</Text>
-            <View style={styles.action}>
-                <FontAwesome 
-                    name="user-o"
-                    color="#05375a"
-                    size={20}
-                />
-                <TextInput 
-                    placeholder="Your Username"
-                    style={styles.textInput}
-                    autoCapitalize="none"
-                    onChangeText={(val) => textInputChange(val)}
-                />
-                {data.check_textInputChange ? 
-                <Animatable.View
-                    animation="bounceIn"
-                >
-                    <Feather 
-                        name="check-circle"
-                        color="green"
-                        size={20}
-                    />
-                </Animatable.View>
-                : null}
-            </View>
-
 
             <Text style={[styles.text_footer, {
                 marginTop: 35
@@ -204,11 +253,12 @@ const SignInScreen = ({navigation}) => {
                 />
                 <TextInput 
                     placeholder="example@email.com"
+                    placeholderTextColor="#666666"
                     style={styles.textInput}
                     autoCapitalize="none"
-                    // onChangeText={(val) => textInputChange(val)}
+                    onChangeText={(val) => handleEmailChange(val)}
                 />
-                {data.check_textInputChange ? 
+                {data.check_emailChange ? 
                 <Animatable.View
                     animation="bounceIn"
                 >
@@ -234,6 +284,7 @@ const SignInScreen = ({navigation}) => {
                 />
                 <TextInput 
                     placeholder="Your Password"
+                    placeholderTextColor="#666666"
                     secureTextEntry={data.secureTextEntry ? true : false}
                     style={styles.textInput}
                     autoCapitalize="none"
@@ -269,13 +320,14 @@ const SignInScreen = ({navigation}) => {
                 />
                 <TextInput 
                     placeholder="Confirm Your Password"
-                    secureTextEntry={data.confirm_secureTextEntry ? true : false}
+                    placeholderTextColor="#666666"
+                    secureTextEntry={data.secureTextEntry ? true : false}
                     style={styles.textInput}
                     autoCapitalize="none"
                     onChangeText={(val) => handleConfirmPasswordChange(val)}
                 />
                 <TouchableOpacity
-                    onPress={updateConfirmSecureTextEntry}
+                    onPress={updateSecureTextEntry}
                 >
                     {data.secureTextEntry ? 
                     <Feather 
@@ -314,6 +366,7 @@ const SignInScreen = ({navigation}) => {
                 />
                 <TextInput 
                     placeholder="Height in cm"
+                    placeholderTextColor="#666666"
                     style={styles.textInput}
                     autoCapitalize="none"
                     // onChangeText={(val) => textInputChange(val)}
@@ -343,6 +396,7 @@ const SignInScreen = ({navigation}) => {
                 />
                 <TextInput 
                     placeholder="Weight in lb"
+                    placeholderTextColor="#666666"
                     style={styles.textInput}
                     autoCapitalize="none"
                     // onChangeText={(val) => textInputChange(val)}
@@ -387,6 +441,7 @@ const SignInScreen = ({navigation}) => {
                 />
                 <TextInput 
                     placeholder="Age"
+                    placeholderTextColor="#666666"
                     style={styles.textInput}
                     autoCapitalize="none"
                     keyboardType = 'number-pad'
@@ -437,6 +492,7 @@ const SignInScreen = ({navigation}) => {
                 />
                 <TextInput 
                     placeholder="Number of wheels"
+                    placeholderTextColor="#666666"
                     style={styles.textInput}
                     autoCapitalize="none"
                     keyboardType = 'number-pad'
@@ -497,6 +553,7 @@ const SignInScreen = ({navigation}) => {
                 />
                 <TextInput 
                     placeholder="wheel chair width (in cm)"
+                    placeholderTextColor="#666666"
                     style={styles.textInput}
                     autoCapitalize="none"
                     keyboardType = 'number-pad'
@@ -527,6 +584,7 @@ const SignInScreen = ({navigation}) => {
                 />
                 <TextInput 
                     placeholder="Seat to floor height (in cm)"
+                    placeholderTextColor="#666666"
                     style={styles.textInput}
                     autoCapitalize="none"
                     keyboardType = 'number-pad'
@@ -556,7 +614,8 @@ const SignInScreen = ({navigation}) => {
             <View style={styles.button}>
                 <TouchableOpacity
                     style={styles.signIn}
-                    onPress={() => {}}
+                    //onPress={() => saveData("STORAGE_KEY", "test val")}
+                    onPress={() => validateAndStore()}
                 >
                 <LinearGradient
                     colors={['#08d4c4', '#01ab9d']}
@@ -570,6 +629,7 @@ const SignInScreen = ({navigation}) => {
 
                 <TouchableOpacity
                     onPress={() => navigation.goBack()}
+                    //onPress={() => readData("userName")}
                     style={[styles.signIn, {
                         borderColor: '#009387',
                         borderWidth: 1,
@@ -582,8 +642,6 @@ const SignInScreen = ({navigation}) => {
                 </TouchableOpacity>
             </View>
             </ScrollView>
-
-
 
 
         </Animatable.View>

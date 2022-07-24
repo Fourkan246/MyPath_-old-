@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, StyleSheet } from 'react-native';
 import {
     useTheme,
@@ -20,11 +20,33 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import{ AuthContext } from '../components/context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export function DrawerContent(props) {
 
+    const [name, setName] = useState('');
+
+
+    useEffect(() => {
+        DataValidate();
+    }, []);
+
+
     const paperTheme = useTheme();
     const { signOut, toggleTheme } = React.useContext(AuthContext);
+
+    const DataValidate = async () => {
+        try {
+            const valueFullName = await AsyncStorage.getItem("fullName");
+            if (valueFullName !== null) {
+                setName(valueFullName);
+            }else{
+                
+            }
+        }catch (e) {
+            alert('Failed to sync user name');
+        }
+    };
 
     return(
         <View style={{flex:1}}>
@@ -34,12 +56,12 @@ export function DrawerContent(props) {
                         <View style={{flexDirection:'row',marginTop: 15}}>
                             <Avatar.Image 
                                 source={{
-                                    uri: 'https://api.adorable.io/avatars/50/abott@adorable.png'
+                                    uri: 'https://gravatar.com/avatar/0db13c2d691eea07102e90ef64a26511?s=200&d=identicon&r=x'
                                 }}
                                 size={40}
                             />
                             <View style={{marginLeft:15, flexDirection:'column'}}>
-                                <Title style={styles.title}>Example User</Title>
+                                <Title style={styles.title}>{name}</Title>
                                 {/* <Caption style={styles.caption}>@e_user</Caption> */}
                             </View>
                         </View>
@@ -68,7 +90,7 @@ export function DrawerContent(props) {
                             label="Home"
                             onPress={() => {props.navigation.navigate('Home')}}
                         />
-                        <DrawerItem 
+                        {/* <DrawerItem 
                             icon={({color, size}) => (
                                 <Icon 
                                 name="account-outline" 
@@ -89,7 +111,7 @@ export function DrawerContent(props) {
                             )}
                             label="Settings"
                             onPress={() => {props.navigation.navigate('SettingsScreen')}}
-                        />
+                        /> */}
 
                     <Text style={[styles.text_footer, {
                                     marginTop: 35

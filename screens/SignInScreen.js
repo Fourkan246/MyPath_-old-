@@ -21,13 +21,15 @@ import {AuthContext} from '../components/context';
 
 import Users from '../model/users';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const SignInScreen = ({navigation}) => {
   const [data, setData] = React.useState({
-    username: '',
+    email: '',
     password: '',
-    check_textInputChange: false,
+    //check_textInputChange: false,
     secureTextEntry: true,
-    isValidUser: true,
+    //isValidUser: true,
     isValidPassword: true,
   });
 
@@ -35,26 +37,30 @@ const SignInScreen = ({navigation}) => {
 
   const {signIn} = React.useContext(AuthContext);
 
+
+
   const textInputChange = val => {
-    if (val.trim().length >= 4) {
+    if (val.length>0 && isValidEmail()) {
       setData({
         ...data,
-        username: val,
-        check_textInputChange: true,
-        isValidUser: true,
+        email: val,
+        // check_textInputChange: true,
+        //isValidUser: true,
       });
-    } else {
+    } else if(val.length>0 && !isValidEmail()) {
       setData({
         ...data,
-        username: val,
-        check_textInputChange: false,
-        isValidUser: false,
+        email: val,
+        // check_textInputChange: false,
+        //isValidUser: false,
       });
     }
   };
 
+
+
   const handlePasswordChange = val => {
-    if (val.trim().length >= 8) {
+    if (val.trim().length >= 6) {
       setData({
         ...data,
         password: val,
@@ -76,41 +82,99 @@ const SignInScreen = ({navigation}) => {
     });
   };
 
-  const handleValidUser = val => {
-    if (val.trim().length >= 4) {
+  const handleValidUser = (val) => {
+    if (isValidEmail(val)) {
       setData({
         ...data,
-        isValidUser: true,
+        //isValidUser: true,
       });
     } else {
       setData({
         ...data,
-        isValidUser: false,
+        //isValidUser: false,
       });
     }
   };
 
-  const loginHandle = (userName, password) => {
-    const foundUser = Users.filter(item => {
-      return userName == item.username && password == item.password;
-    });
+  const isValidEmail = (email) => {
+    return /\S+@\S+\.\S+/.test(email);
+  }
 
-    if (data.username.length == 0 || data.password.length == 0) {
-      Alert.alert(
-        'Wrong Input!',
-        'Username or password field cannot be empty.',
-        [{text: 'Okay'}],
-      );
-      return;
+  const DataValidate = async (email, password) => {
+    try {
+        const valueEmail = await AsyncStorage.getItem("email");
+        if (valueEmail !== null) {
+            if(valueEmail != email)
+            {
+              return false;
+            }else{
+              console.log("True--> " + valueEmail);
+            }
+        }else{
+          console.log("Value is null");
+          return false;
+        }
+
+        const valuePass = await AsyncStorage.getItem("password");
+        if (valuePass !== null) {
+          if(valuePass != password){
+            return false;
+          }else{
+            console.log("True--> " + valuePass);
+          }
+        }else{
+          console.log("Value is null");
+          return false;
+        }
+    } catch (e) {
+        alert('Failed to fetch the input from storage');
     }
 
-    if (foundUser.length == 0) {
-      Alert.alert('Invalid User!', 'Username or password is incorrect.', [
-        {text: 'Okay'},
-      ]);
-      return;
+    console.log("Correct");
+    return true;
+  };
+
+
+  const loginHandle = async (email, password) => {
+
+    var res = await DataValidate(email, password);
+    console.log("Res is " + res);
+
+    if(Boolean(res) == true || (email == "user1@email.com" && password == "abcd-1234"))
+    {
+      console.log("True");
+      //signIn(Users[0]);
+      const foundUser = Users.filter(item => {
+        return "user1@email.com" == item.email && "password" == item.password;
+      });
+      signIn(foundUser);
+
+      console.log("in");
+    }else{
+      alert("Email or password is incorrect");
     }
-    signIn(foundUser);
+
+    // const foundUser = Users.filter(item => {
+    //   return email == item.email && password == item.password;
+    // });
+
+    // if (data.email.length == 0 || data.password.length == 0) {
+    //   Alert.alert(
+    //     'Wrong Input!',
+    //     'Email or password field cannot be empty.',
+    //     [{text: 'Okay'}],
+    //   );
+    //   return;
+    // }
+
+    // if (foundUser.length == 0) {
+    //   Alert.alert('Invalid User!', 'Email or password is incorrect.', [
+    //     {text: 'Okay'},
+    //   ]);
+    //   return;
+    // }
+    // console.log("Type of   " + typeof(Users));
+    // signIn(foundUser);
   };
 
   return (
@@ -134,12 +198,12 @@ const SignInScreen = ({navigation}) => {
               color: colors.text,
             },
           ]}>
-          Username
+          Email address
         </Text>
         <View style={styles.action}>
           <FontAwesome name="user-o" color={colors.text} size={20} />
           <TextInput
-            placeholder="Your Username (use 'user1' for testing)"
+            placeholder="Email"
             placeholderTextColor="#666666"
             style={[
               styles.textInput,
@@ -149,7 +213,7 @@ const SignInScreen = ({navigation}) => {
             ]}
             autoCapitalize="none"
             onChangeText={val => textInputChange(val)}
-            onEndEditing={e => handleValidUser(e.nativeEvent.text)}
+            //onEndEditing={e => handleValidUser(e.nativeEvent.text)}
           />
           {data.check_textInputChange ? (
             <Animatable.View animation="bounceIn">
@@ -157,13 +221,13 @@ const SignInScreen = ({navigation}) => {
             </Animatable.View>
           ) : null}
         </View>
-        {data.isValidUser ? null : (
+        {/* {data.isValidUser ? null : (
           <Animatable.View animation="fadeInLeft" duration={500}>
             <Text style={styles.errorMsg}>
-              Username must be 4 characters long.
+              Email address is incorrect
             </Text>
           </Animatable.View>
-        )}
+        )} */}
 
         <Text
           style={[
@@ -178,7 +242,7 @@ const SignInScreen = ({navigation}) => {
         <View style={styles.action}>
           <Feather name="lock" color={colors.text} size={20} />
           <TextInput
-            placeholder="Your Password (use 'password' for testing)"
+            placeholder="Your Password"
             placeholderTextColor="#666666"
             secureTextEntry={data.secureTextEntry ? true : false}
             style={[
@@ -201,21 +265,21 @@ const SignInScreen = ({navigation}) => {
         {data.isValidPassword ? null : (
           <Animatable.View animation="fadeInLeft" duration={500}>
             <Text style={styles.errorMsg}>
-              Password must be 8 characters long.
+              Password must be 6 characters long.
             </Text>
           </Animatable.View>
         )}
 
-        <TouchableOpacity>
+        {/* <TouchableOpacity>
           <Text style={{color: '#009387', marginTop: 15}}>
             Forgot password?
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <View style={styles.button}>
           <TouchableOpacity
             style={styles.signIn}
             onPress={() => {
-              loginHandle(data.username, data.password);
+              loginHandle(data.email, data.password);
             }}>
             <LinearGradient
               colors={['#08d4c4', '#01ab9d']}

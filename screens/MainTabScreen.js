@@ -18,13 +18,16 @@ const MainTabScreen = () => (
     <Tab.Navigator
       initialRouteName="Home"
       activeColor="#fff"
+      shifting={true}
+      sceneAnimationEnabled={true}
+      barStyle={{ backgroundColor: '#009387' }}
     >
       <Tab.Screen
         name="Home"
         component={HomeStackScreen}
         options={{
           tabBarLabel: 'Home',
-          tabBarColor: '#009387',
+          // tabBarColor: '#009387',
           tabBarIcon: ({ color }) => (
             <Icon name="ios-home" color={color} size={26} />
           ),
@@ -34,10 +37,10 @@ const MainTabScreen = () => (
         name="Notifications"
         component={DetailsStackScreen}
         options={{
-          tabBarLabel: 'Updates',
-          tabBarColor: '#009387',
+          tabBarLabel: 'Data',
+          //tabBarColor: '#009387',
           tabBarIcon: ({ color }) => (
-            <Icon name="ios-notifications" color={color} size={26} />
+            <Icon name="documents" color={color} size={26} />
           ),
         }}
       />
@@ -46,27 +49,29 @@ const MainTabScreen = () => (
         component={ProfileScreen}
         options={{
           tabBarLabel: 'Profile',
-          tabBarColor: '#694fad',
+          tabBarColor: '#009387',
           tabBarIcon: ({ color }) => (
             <Icon name="ios-person" color={color} size={26} />
           ),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Explore"
         component={ExploreScreen}
         options={{
           tabBarLabel: 'Explore',
-          tabBarColor: '#d02860',
+          tabBarColor: '#009387',
           tabBarIcon: ({ color }) => (
             <Icon name="ios-aperture" color={color} size={26} />
           ),
         }}
-      />
+      /> */}
     </Tab.Navigator>
 );
 
 export default MainTabScreen;
+
+
 
 const HomeStackScreen = ({navigation}) => (
 <HomeStack.Navigator screenOptions={{
@@ -97,7 +102,7 @@ const DetailsStackScreen = ({navigation}) => (
         fontWeight: 'bold'
         }
     }}>
-        <DetailsStack.Screen name="Details" component={DetailsScreen} options={{
+        <DetailsStack.Screen name="Data" component={DetailsScreen} options={{
         headerLeft: () => (
             <Icon.Button name="ios-menu" size={25} backgroundColor="#009387" onPress={() => navigation.openDrawer()}></Icon.Button>
         )
