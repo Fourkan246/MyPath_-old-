@@ -21,6 +21,7 @@
       android:vmSafeMode="true"       
       android:allowClearUserData="true"
       android:hardwareAccelerated="true"
+      android:requestLegacyExternalStorage="true"
       >
       <activity
         android:name=".MainActivity"
@@ -34,5 +35,6 @@
         </intent-filter>
       </activity>
       <service android:name="com.asterinet.react.bgactions.RNBackgroundActionsTask" />
+      
     </application>
 </manifest>

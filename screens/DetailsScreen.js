@@ -31,6 +31,7 @@ const TaskSchema = {
   primaryKey: 'time_stamp',
 };
 
+
 const DetailsScreen = () => {
 
   const navigation = useNavigation();
@@ -104,9 +105,12 @@ const DetailsScreen = () => {
   };
 
 
-  //==============================================================================
+  //=============================================================================
+
+
 
   const ViewData = async () => {
+
     const availableData = realm.objects("senData").filtered(
       dateStart.getTime() + " <= time_stamp && time_stamp <= " + dateEnd.getTime()
     );
@@ -125,7 +129,29 @@ const DetailsScreen = () => {
     var path = '/storage/emulated/0/Android/data/com.mypath/files' + '/';
     if (Platform.OS === 'ios') {
       path = RNFS.DocumentDirectoryPath + '/';
+    }else{
+      try {
+            const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+            {
+              title: "MyPath needs permnission to save file",
+              message:
+                "MyPath App needs access to your file system " +
+                "so you can export data",
+              // buttonNeutral: "Ask Me Later",
+              // buttonNegative: "Cancel",
+              buttonPositive: "Allow"
+            });
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+              // Your Save flow
+            }
+
+            path = RNFS.ExternalStorageDirectoryPath + '/';
+        } catch (e) {
+          console.log(e);
+        }
     }
+    
 
     var fileLoc = path + "MyPath_"+ Date.now() +".csv";
     RNFS.writeFile(fileLoc, textData, 'utf8')
@@ -135,13 +161,21 @@ const DetailsScreen = () => {
           "Location : " + fileLoc,
           [
           {style: 'destructive'},
-          {text: 'Cancel'},
+          {text: 'Ok'},
           ],
           {cancelable: false}
         )
       })
       .catch((err) => {
         console.log(err.message);
+        Alert.alert("Failed for android version or permission...!",
+          "Location : " + fileLoc,
+          [
+          {style: 'destructive'},
+          {text: 'Ok'},
+          ],
+          {cancelable: false}
+        );
       });
   };
 
@@ -212,12 +246,6 @@ const DetailsScreen = () => {
         </View>
       </View>
 
-      {/* <View>
-        <Button
-        disabled = {!enableExportBtn}
-        onPress={() => navigation.navigate('MapViewScene')}
-        title="View path on map" />
-      </View> */}
       <View style={styles.space} />
       <View style={styles.space} />
       <View style={styles.space} />
@@ -233,18 +261,6 @@ const DetailsScreen = () => {
           display="default"
           onChange={onChange}
            />
-
-
-        // <View>
-        //   <DateTimePicker
-        //     styke={{width:'100%'}}
-        //     testID="dateTimePicker"
-        //     value={dateStart}
-        //     mode={mode}
-        //     is24Hour={true}
-        //     onChange={onChange}
-        //   />
-        // </View>
       )}
     </View>
     

@@ -174,7 +174,7 @@ const HomeScreen = () => {
      // } catch (error) {
      // }
  
-     console.log('tic');
+     //console.log('tic');
      StoreData();
    }, 20);
  
