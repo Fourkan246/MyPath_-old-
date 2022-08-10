@@ -8,6 +8,8 @@ import {
   StyleSheet,
   StatusBar,
   Alert,
+  KeyboardAvoidingView,
+  ScrollView
 } from 'react-native';
 
 import * as Animatable from 'react-native-animatable';
@@ -178,6 +180,11 @@ const SignInScreen = ({navigation}) => {
   };
 
   return (
+  <KeyboardAvoidingView
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    style={styles.container}
+  >
+
     <View style={styles.container}>
       <StatusBar backgroundColor="#009387" barStyle="light-content" />
       <View style={styles.header}>
@@ -191,6 +198,9 @@ const SignInScreen = ({navigation}) => {
             backgroundColor: colors.background,
           },
         ]}>
+        <ScrollView nestedScrollEnabled={true}>
+        
+
         <Text
           style={[
             styles.text_footer,
@@ -215,6 +225,7 @@ const SignInScreen = ({navigation}) => {
             onChangeText={val => textInputChange(val)}
             //onEndEditing={e => handleValidUser(e.nativeEvent.text)}
           />
+          
           {data.check_textInputChange ? (
             <Animatable.View animation="bounceIn">
               <Feather name="check-circle" color="green" size={20} />
@@ -317,8 +328,11 @@ const SignInScreen = ({navigation}) => {
             </Text>
           </TouchableOpacity>
         </View>
+        </ScrollView>
       </Animatable.View>
     </View>
+  </KeyboardAvoidingView>
+
   );
 };
 

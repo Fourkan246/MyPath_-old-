@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { Alert, Button, Text, StyleSheet, View, Platform, SafeAreaView, PermissionsAndroid} from 'react-native';
+import { Alert, Button, Text, StyleSheet, View, Platform, SafeAreaView, PermissionsAndroid, StatusBar, Linking} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import TimePicker from 'react-native-simple-time-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -8,6 +8,7 @@ import * as RNFS from 'react-native-fs';
 import Card from './Card';
 import Share from 'react-native-share';
 import RNFetchBlob from 'rn-fetch-blob'
+import * as ScopedStorage from 'react-native-scoped-storage';
 
 import Realm from 'realm';
 const TaskSchema = {
@@ -129,6 +130,31 @@ const DetailsScreen = () => {
     var path = '/storage/emulated/0/Android/data/com.mypath/files' + '/';
     if (Platform.OS === 'ios') {
       path = RNFS.DocumentDirectoryPath + '/';
+
+      var fileLoc = path + "MyPath_"+ Date.now() +".csv";
+      RNFS.writeFile(fileLoc, textData, 'utf8')
+        .then((success) => {
+          console.log('FILE WRITTEN!');
+          Alert.alert("Done!",
+            "Location : " + fileLoc,
+            [
+            {style: 'destructive'},
+            {text: 'Ok'},
+            ],
+            {cancelable: false}
+          )
+        })
+        .catch((err) => {
+          console.log(err.message);
+          Alert.alert("Failed for version or permission...!",
+            "Location : " + fileLoc,
+            [
+            {style: 'destructive'},
+            {text: 'Ok'},
+            ],
+            {cancelable: false}
+          );
+        });
     }else{
       try {
             const granted = await PermissionsAndroid.request(
@@ -147,41 +173,69 @@ const DetailsScreen = () => {
             }
 
             path = RNFS.ExternalStorageDirectoryPath + '/';
+
+
+
+            await ScopedStorage.createDirectory("/storage/emulated/0/", "MyPath").then((success) => {
+            console.log("successful directory creation!")
+            createFile(textData)
+            }).catch((err) => {
+              console.log(err.message);
+            });
+
         } catch (e) {
           console.log(e);
         }
     }
     
 
-    var fileLoc = path + "MyPath_"+ Date.now() +".csv";
-    RNFS.writeFile(fileLoc, textData, 'utf8')
-      .then((success) => {
-        console.log('FILE WRITTEN!');
-        Alert.alert("Done!",
-          "Location : " + fileLoc,
-          [
-          {style: 'destructive'},
-          {text: 'Ok'},
-          ],
-          {cancelable: false}
-        )
-      })
+    // var fileLoc = path + "MyPath_"+ Date.now() +".csv";
+    // RNFS.writeFile(fileLoc, textData, 'utf8')
+    //   .then((success) => {
+    //     console.log('FILE WRITTEN!');
+    //     Alert.alert("Done!",
+    //       "Location : " + fileLoc,
+    //       [
+    //       {style: 'destructive'},
+    //       {text: 'Ok'},
+    //       ],
+    //       {cancelable: false}
+    //     )
+    //   })
+    //   .catch((err) => {
+    //     console.log(err.message);
+    //     Alert.alert("Failed for android version or permission...!",
+    //       "Location : " + fileLoc,
+    //       [
+    //       {style: 'destructive'},
+    //       {text: 'Ok'},
+    //       ],
+    //       {cancelable: false}
+    //     );
+    //   });
+  };
+
+  async function createFile(textData){
+    //console.log(textData)
+    await ScopedStorage.writeFile("/storage/emulated/0/MyPath/", textData, Date.now() + ".csv", "text/csv", "utf8").then((success) => {
+      var fileLoc = "/storage/emulated/0/MyPath/" + Date.now() + ".csv"
+      Alert.alert("Done!",
+        "Location : " + fileLoc,
+        [
+          { style: 'destructive' },
+          { text: 'Cancel' },
+        ],
+        { cancelable: false }
+      )
+    })
       .catch((err) => {
         console.log(err.message);
-        Alert.alert("Failed for android version or permission...!",
-          "Location : " + fileLoc,
-          [
-          {style: 'destructive'},
-          {text: 'Ok'},
-          ],
-          {cancelable: false}
-        );
       });
-  };
+  }
 
   return (
     <View style={styles.container}>
-      <Card style={{ height: 180, width: '100%' ,backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center',position: 'absolute', top: 10}} >
+      <Card style={{ height: 160, width: '100%' ,backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center',position: 'absolute', top: 10}} >
         <View>
           <CustomButton
           text="Select Start Date!"
@@ -207,7 +261,7 @@ const DetailsScreen = () => {
 
       <View style={styles.space} />
       
-      <Card style={{ height: 180, width: '100%' ,backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center',position: 'absolute', top: 200}} >
+      <Card style={{ height: 160, width: '100%' ,backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center',position: 'absolute', top: 180}} >
         <View>
           <CustomButton
           text="Select End Date!"
@@ -233,7 +287,7 @@ const DetailsScreen = () => {
         <Text>selected: {dateEnd.toLocaleString()}</Text>
       </Card>
 
-      <View style={{position: 'absolute', bottom: 15}}>
+      <View style={{position: 'absolute', bottom: 70}}>
         <Text>{text}</Text>
         <View>
           <Button onPress={CheckDataAvailibility} title="Check data availability" />
@@ -245,6 +299,21 @@ const DetailsScreen = () => {
           title="Export data" />
         </View>
       </View>
+
+        <View style={{position:'absolute', bottom: 0}}>
+          <Text style={styles.red}>
+            To export data you must have to files and media access permission to
+            == "Allow management of all files"==.
+          </Text>
+          <Button
+            title="Change Files and media Access Permission"
+            type="Error"
+            color="#FAA27F"
+            onPress={() => Linking.openSettings()}
+          />
+        </View>
+
+
 
       <View style={styles.space} />
       <View style={styles.space} />

@@ -11,7 +11,9 @@ import {
     ScrollView,
     StatusBar,
     SafeAreaView,
-    LogBox
+    LogBox,
+    Linking,
+    KeyboardAvoidingView
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
@@ -104,8 +106,8 @@ const SignInScreen = ({navigation}) => {
     const [openGender, setOpenGender] = useState(false);
     const [valueGender, setValueGender] = useState(null);
     const [itemsGender, setItemsGender] = useState([
-      {label: 'Man', value: 'man'},
-      {label: 'Woman', value: 'woman'},
+      {label: 'Male', value: 'man'},
+      {label: 'Female', value: 'woman'},
       {label: 'Transgender', value: 'tg'},
       {label: 'Non-binary/Non-conforming', value: 'nb'},
       {label: 'Prefer not to respond', value: 'pn'},
@@ -131,11 +133,9 @@ const SignInScreen = ({navigation}) => {
     const [openTM, setOpenTM] = useState(false);
     const [valueTM, setValueTM] = useState(null);
     const [itemsTM, setItemsTM] = useState([
-      {label: 'Spoke Wheels', value: 'swwc'},
-      {label: 'Meg Wheels', value: 'mewc'},
-      {label: 'Pneumatic Tyres', value: 'pnwc'},
-      {label: 'Solid Tyres', value: 'sowc'},
-      {label: 'Flat Free Tyres', value: 'ffwc'},
+      {label: 'Pneumatic', value: 'pnwc'},
+      {label: 'Solid', value: 'sowc'},
+      {label: 'Flat Free', value: 'ffwc'},
       {label: 'Other', value: 'other'},
     ]);
 
@@ -203,6 +203,12 @@ const SignInScreen = ({navigation}) => {
     };
 
     return (
+
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+
       <View style={styles.container}>
           <StatusBar backgroundColor='#009387' barStyle="light-content"/>
         <View style={styles.header}>
@@ -215,7 +221,7 @@ const SignInScreen = ({navigation}) => {
 
         <ScrollView nestedScrollEnabled={true}>
 
-            <Text style={styles.text_footer}>Full Name</Text>
+            <Text style={styles.text_footer}>Full Name *</Text>
             <View style={styles.action}>
                 <FontAwesome 
                     name="user-o"
@@ -244,7 +250,7 @@ const SignInScreen = ({navigation}) => {
 
             <Text style={[styles.text_footer, {
                 marginTop: 35
-            }]}>Email</Text>
+            }]}>Email *</Text>
             <View style={styles.action}>
                 <FontAwesome 
                     name="envelope-o"
@@ -275,7 +281,7 @@ const SignInScreen = ({navigation}) => {
 
             <Text style={[styles.text_footer, {
                 marginTop: 35
-            }]}>Password</Text>
+            }]}>Password *</Text>
             <View style={styles.action}>
                 <Feather 
                     name="lock"
@@ -311,7 +317,7 @@ const SignInScreen = ({navigation}) => {
 
             <Text style={[styles.text_footer, {
                 marginTop: 35
-            }]}>Confirm Password</Text>
+            }]}>Confirm Password *</Text>
             <View style={styles.action}>
                 <Feather 
                     name="lock"
@@ -365,7 +371,7 @@ const SignInScreen = ({navigation}) => {
                     size={20}
                 />
                 <TextInput 
-                    placeholder="Height in cm"
+                    placeholder="Height in inches"
                     placeholderTextColor="#666666"
                     style={styles.textInput}
                     autoCapitalize="none"
@@ -395,7 +401,7 @@ const SignInScreen = ({navigation}) => {
                     size={20}
                 />
                 <TextInput 
-                    placeholder="Weight in lb"
+                    placeholder="Weight in pounds"
                     placeholderTextColor="#666666"
                     style={styles.textInput}
                     autoCapitalize="none"
@@ -528,7 +534,7 @@ const SignInScreen = ({navigation}) => {
 
             <Text style={[styles.text_footer, {
                 marginTop: 35
-            }]}>Tires Material</Text>
+            }]}>Tire Material</Text>
             <View style={styles.action}>
                 <DropDownPicker 
                     open={openTM}
@@ -552,7 +558,7 @@ const SignInScreen = ({navigation}) => {
                     size={20}
                 />
                 <TextInput 
-                    placeholder="wheel chair width (in cm)"
+                    placeholder="wheel chair width (in inches)"
                     placeholderTextColor="#666666"
                     style={styles.textInput}
                     autoCapitalize="none"
@@ -583,7 +589,7 @@ const SignInScreen = ({navigation}) => {
                     size={20}
                 />
                 <TextInput 
-                    placeholder="Seat to floor height (in cm)"
+                    placeholder="Seat to floor height (in inches)"
                     placeholderTextColor="#666666"
                     style={styles.textInput}
                     autoCapitalize="none"
@@ -605,11 +611,12 @@ const SignInScreen = ({navigation}) => {
 
             <View style={styles.textPrivate}>
                 <Text style={styles.color_textPrivate}>
-                    By signing up you agree to our
+                    By signing up you agree to our 
                 </Text>
-                <Text style={[styles.color_textPrivate, {fontWeight: 'bold'}]}>{" "}Terms of service</Text>
-                <Text style={styles.color_textPrivate}>{" "}and</Text>
-                <Text style={[styles.color_textPrivate, {fontWeight: 'bold'}]}>{" "}Privacy policy</Text>
+                <Text style={[styles.color_textPrivate, {fontWeight: 'bold'}]}
+                    onPress={() => Linking.openURL('https://docs.google.com/document/d/1NwtI7EIH2jD8wQZveEcx0KPXWzS880eBYcwRQ9a9pMM/edit?usp=sharing')}>
+                    {" "} Privacy Policy
+                </Text>
             </View>
             <View style={styles.button}>
                 <TouchableOpacity
@@ -646,6 +653,8 @@ const SignInScreen = ({navigation}) => {
 
         </Animatable.View>
       </View>
+    </KeyboardAvoidingView>
+
     );
 };
 

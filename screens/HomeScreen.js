@@ -124,7 +124,7 @@ const HomeScreen = () => {
  
  
  
- const onBackTest = () => {
+ const onBackTest = async () => {
    setUpdateIntervalForType(SensorTypes.accelerometer, 20);
    setUpdateIntervalForType(SensorTypes.magnetometer, 20);
    setUpdateIntervalForType(SensorTypes.gyroscope, 20);
