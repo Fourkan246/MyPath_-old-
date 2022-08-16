@@ -1,7 +1,8 @@
 # MyPath
 MyPath
 Identifying Surface Characteristics for Generating Personalized Accessible Routes for Wheelchair Users through Participatory Sensing
-visit: http://routemypath.com/
+
+For more information, visit: http://routemypath.com/
 
 ![alt text](https://github.com/Fourkan246/MyPath/blob/d28697a945d1b4dcd666e0bd432e9aae966b127d/assets/logo.png)
 
